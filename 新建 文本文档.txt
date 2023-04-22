@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+//静态链表的遍历
+void text();
+struct LintNode
+{
+	int date;
+	struct LintNode *next;
+};
+
+void text()
+{
+	struct LintNode node1 = {10, NULL};
+	struct LintNode node2 = {20, NULL};
+	struct LintNode node3 = {30, NULL};
+	struct LintNode node4 = {40, NULL};
+	struct LintNode node5 = {50, NULL};
+	struct LintNode node6 = {60, NULL};
+
+	node1.next = &node2;
+	node2.next = &node3;
+	node3.next = &node4;
+	node4.next = &node5;
+	node5.next = &node6;
+
+	struct LintNode *p_current = &node1;
+	while (p_current != NULL)
+	{
+		printf("%d ", p_current -> date);
+		p_current = p_current -> next;
+	}
+}
+
+int main()
+{
+	text();
+
+	return 0;
+}
+	
