@@ -106,4 +106,58 @@ int main()
 	Foreach_LinkList(header);
 	return 0;
 }
+
+
+
+//插入新节点
+void Insert_val(struct LinkNode *header, int old_val, int new_val)
+{
+    if (header == NULL)
+        return;
+    //构造两个指针变量，两指针变量相邻
+    struct LinkNode *pPrev = header;
+    struct LinkNode *pCurrent = pPrev -> next;
+    //找到old val，并让pCurrent指向old val
+    while (pCurrent != NULL)
+    {
+        if (pCurrent -> date == old_val)
+            break;
+        
+        pPrev = pCurrent;
+        pCurrent = pCurrent -> next;
+    }
+    //如果pCurrent为NULL， 那么不插入
+    if (pCurrent == NULL)
+        return;
+    //创建新节点
+    struct LinkNode *new_node = malloc(sizeof(struct LinkNode));
+    new_node -> date = new_val;
+    new_node -> next = NULL;
+    //将新节点放在old node前一格
+    pPrev -> next = new_node;
+    new_node -> next = pCurrent;
+}
+
+
+//清空链表
+void Clear_LinkList(struct LinkNode *header)
+{
+    if (header == NULL)
+        return;
+
+    //创建辅助指针变量，使之指向头节点下一个节点
+    struct LinkNode *pCurrent = header -> next;
+    //逐个清空节点
+    while (pCurrent != NULL)
+    {
+        //保存下一个节点的位置，防止失去连接
+        struct LinkNode *pNext = pCurrent -> next;
+        //释放当前节点内存
+        free(pCurrent);
+        //pCurrent指向下一个节点
+        pCurrent = pNext;
+    }
+    //让头节点指向空
+    header -> next = NULL;
+}
 	
