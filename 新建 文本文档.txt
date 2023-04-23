@@ -207,3 +207,206 @@ void Destroy_LinkList(struct LinkNode *header)
         pCurrent = pNext;
     }
 }
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+//初始化动态链表
+struct LinkNode *Init_LinkList();
+//遍历链表
+void Foreach_LinkList(struct LinkNode *header);
+//插入节点
+void Insert_val(struct LinkNode *header, int old_val, int nem_val);
+//清空链表
+void Clear_LinkList(struct LinkNode *header);
+//删除节点
+void Delete_val(struct LinkNode *header, int del_val);
+//销毁链表
+void Destroy_LinkList(struct LinkNode *header);
+
+struct LinkNode
+{
+	int date;
+	struct LinkNode *next;
+};
+
+//初始化链表
+struct LinkNode *Init_LinkList()
+{
+	//创建头节点并分配空间
+	struct LinkNode *header = malloc(sizeof(struct LinkNode));
+	header -> date = -1;
+	header -> next = NULL;
+	//创建尾部指针
+	struct LinkNode *pRear = header;
+	//创建新节点并向其输入数据
+	int val = 1;
+	while (val != -1)
+	{
+		printf("请输入新的数据：\n");
+		scanf("%d", &val);
+		if (val == -1)
+			break;
+		//创建节点
+		struct LinkNode *new_node = malloc(sizeof(struct LinkNode));
+		new_node -> date = val;
+		new_node -> next = NULL;
+		//将新节点插入前面
+		pRear -> next = new_node;
+		//移动尾部指针
+		pRear = new_node;
+	}
+	//返回头节点地址
+	return header;
+}
+
+//遍历链表
+void Foreach_LinkList(struct LinkNode *header)
+{
+	if (header == NULL)
+		return;
+	//辅助指针变量
+	struct LinkNode *pCurrent = header -> next;
+	while (pCurrent != NULL)
+	{
+		printf("%d ", pCurrent -> date);
+		pCurrent = pCurrent -> next;
+	}
+}
+
+//插入新节点
+void Insert_val(struct LinkNode *header, int old_val, int new_val)
+{
+    if (header == NULL)
+        return;
+    //构造两个指针变量，两指针变量相邻
+    struct LinkNode *pPrev = header;
+    struct LinkNode *pCurrent = pPrev -> next;
+    //找到old val，并让pCurrent指向old val
+    while (pCurrent != NULL)
+    {
+        if (pCurrent -> date == old_val)
+            break;
+        
+        pPrev = pCurrent;
+        pCurrent = pCurrent -> next;
+    }
+    //如果pCurrent为NULL， 那么不插入
+    if (pCurrent == NULL)
+        return;
+    //创建新节点
+    struct LinkNode *new_node = malloc(sizeof(struct LinkNode));
+    new_node -> date = new_val;
+    new_node -> next = NULL;
+    //将新节点放在old node前一格
+    pPrev -> next = new_node;
+    new_node -> next = pCurrent;
+}
+
+//清空链表
+void Clear_LinkList(struct LinkNode *header)
+{
+    if (header == NULL)
+        return;
+
+    //创建辅助指针变量，使之指向头节点下一个节点
+    struct LinkNode *pCurrent = header -> next;
+    //逐个清空节点
+    while (pCurrent != NULL)
+    {
+        //保存下一个节点的位置，防止失去连接
+        struct LinkNode *pNext = pCurrent -> next;
+        //释放当前节点内存
+        free(pCurrent);
+        //pCurrent指向下一个节点
+        pCurrent = pNext;
+    }
+    //让头节点指向空
+    header -> next = NULL;
+}
+
+//删除节点
+void Delete_val(struct LinkNode *header, int del_val)
+{
+    if (header == NULL)
+        return;
+    //创建两个辅助指针变量使之相邻
+    struct LinkNode *pPrev = header;
+    struct LinkNode *pCurrent = pPrev -> next;
+    //找到要删除的节点
+    while (pCurrent != NULL)
+    {
+        if (pCurrent -> date == del_val)
+            break;
+        //移动两个指针
+        pPrev = pCurrent;
+        pCurrent = pCurrent -> next;
+    }
+    if (pCurrent == NULL)
+        return;
+    //删除节点
+    pPrev -> next = pCurrent -> next;
+    free(pCurrent);
+    pCurrent = NULL;
+}
+
+//销毁链表
+void Destroy_LinkList(struct LinkNode *header)
+{
+    if (header == NULL)
+        return;
+    //创建辅助指针变量
+    struct LinkNode *pCurrent = header;
+    //依次释放每个节点的内存
+    while (pCurrent != NULL)
+    {
+        //保存下一个节点的位置，防止失去连接
+        struct LinkNode *pNext = pCurrent -> next;
+        //释放该节点内存
+        free(pCurrent);
+        //指向下一节点
+        pCurrent = pNext;
+    }
+}
+int main()
+{
+	//初始化链表
+	struct LinkNode *header = Init_LinkList();
+	//遍历链表
+	Foreach_LinkList(header);
+    //插入新节点
+    printf("输入新的数据：\n");
+    int new_val;
+    scanf("%d", &new_val);
+    Insert_val(header, 600, new_val);
+    printf("\n-------------------\n");
+    //再次遍历链表
+    Foreach_LinkList(header);
+    //删除某个节点
+    printf("\n输入你要删除的数据：\n");
+    int del_val;
+    scanf("%d", &del_val);
+    Delete_val(header, del_val);
+    //再次遍历链表
+    Foreach_LinkList(header);
+    //清空链表
+    printf("\n是否清空链表？请输入yes或no：\n");
+    char str[5];
+    getchar();
+    gets(str);
+    if (strcmp(str, "yes") == 0)
+    {    Clear_LinkList(header);
+        //再次遍历链表检查是否清空链表
+        Foreach_LinkList(header);
+    }
+    else if(strcmp(str, "no") == 0)
+    {
+        Foreach_LinkList(header);
+    }
+	return 0;
+}
