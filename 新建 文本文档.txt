@@ -161,3 +161,49 @@ void Clear_LinkList(struct LinkNode *header)
     header -> next = NULL;
 }
 	
+
+
+
+//删除节点
+void Delete_val(struct LinkNode *header, int del_val)
+{
+    if (header == NULL)
+        return;
+    //创建两个辅助指针变量使之相邻
+    struct LinkNode *pPrev = header;
+    struct LinkNode *pCurrent = pPrev -> next;
+    //找到要删除的节点
+    while (pCurrent != NULL)
+    {
+        if (pCurrent -> date == del_val)
+            break;
+        //移动两个指针
+        pPrev = pCurrent;
+        pCurrent = pCurrent -> next;
+    }
+    if (pCurrent == NULL)
+        return;
+    //删除节点
+    pPrev -> next = pCurrent -> next;
+    free(pCurrent);
+    pCurrent = NULL;
+}
+
+//销毁链表
+void Destroy_LinkList(struct LinkNode *header)
+{
+    if (header == NULL)
+        return;
+    //创建辅助指针变量
+    struct LinkNode *pCurrent = header;
+    //依次释放每个节点的内存
+    while (pCurrent != NULL)
+    {
+        //保存下一个节点的位置，防止失去连接
+        struct LinkNode *pNext = pCurrent -> next;
+        //释放该节点内存
+        free(pCurrent);
+        //指向下一节点
+        pCurrent = pNext;
+    }
+}
