@@ -38,4 +38,72 @@ int main()
 
 	return 0;
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+//初始化动态链表, 并且遍历链表
+struct LinkNode *Init_LinkList();
+void Foreach_LinkList(struct LinkNode *header);
+
+struct LinkNode
+{
+	int date;
+	struct LinkNode *next;
+};
+//初始化链表
+struct LinkNode *Init_LinkList()
+{
+	//创建头节点并分配空间
+	struct LinkNode *header = malloc(sizeof(struct LinkNode));
+	header -> date = -1;
+	header -> next = NULL;
+	//创建尾部指针
+	struct LinkNode *pRear = header;
+	//创建新节点并向其输入数据
+	int val = 1;
+	while (val != -1)
+	{
+		printf("请输入新的数据：\n");
+		scanf("%d", &val);
+		if (val == -1)
+			break;
+		//创建节点
+		struct LinkNode *new_node = malloc(sizeof(struct LinkNode));
+		new_node -> date = val;
+		new_node -> next = NULL;
+		//将新节点插入前面
+		pRear -> next = new_node;
+		//移动尾部指针
+		pRear = new_node;
+	}
+	//返回头节点地址
+	return header;
+}
+//遍历链表
+void Foreach_LinkList(struct LinkNode *header)
+{
+	if (header == NULL)
+		return;
+	//辅助指针变量
+	struct LinkNode *pCurrent = header -> next;
+	while (pCurrent != NULL)
+	{
+		printf("%d ", pCurrent -> date);
+		pCurrent = pCurrent -> next;
+	}
+}
+
+int main()
+{
+	//初始化链表
+	struct LinkNode *header = Init_LinkList();
+	//遍历链表
+	Foreach_LinkList(header);
+	return 0;
+}
 	
