@@ -410,3 +410,147 @@ int main()
     }
 	return 0;
 }
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define MAX_SIZE 30
+//创建线性表结构类型
+struct LNode
+{
+    //创建数组
+    int Data[MAX_SIZE];
+    //记录最后数据下标
+    int Last;
+};
+//定义结构指针
+typedef struct LNode *List;
+
+//初始化线性表
+List MarkEmpty();
+//查找数据
+int Find(int x, List PtrL);
+//插入数据
+void Insert(int x, int i, List PtrL);
+//删除元素
+void Delete(int i, List PtrL);
+
+//初始化线性表
+List MarkEmpty()
+{
+    //创建线性表
+    List PtrL;
+    //分配空间
+    PtrL = (List)malloc(sizeof(struct LNode));
+    PtrL -> Last = -1;
+    return PtrL;
+}
+
+//查找数据
+int Find(int x, List PtrL)
+{
+    int i = 0;
+    //逐个查找数据
+    while (i <= PtrL -> Last && PtrL -> Data[i] != x)
+    {
+        i++;
+    }
+    //如果没找到，返回-1, 否则返回i
+    if (i > PtrL -> Last)
+        return -1;
+    else    
+        return i + 1;
+}
+
+//插入数据
+void Insert(int x, int i, List PtrL)
+{
+    int j;
+    //判断线性表是否装满
+    if (PtrL -> Last == MAX_SIZE - 1)
+    {
+        printf("线性表已满\n");
+        return;
+    }
+    //检查插入位置的合法性
+    if (i < 1 || i > PtrL->Last + 2)
+    {
+        printf("位置不合法！");
+        return;
+    }
+    for (j = PtrL -> Last; j >= i - 1; j--)
+    {
+        PtrL -> Data[j + 1] = PtrL -> Data[j];
+    }
+    //插入新元素
+    PtrL -> Data[i - 1] = x;
+    //Last仍指向最后元素
+    PtrL -> Last++;
+}
+
+//删除元素
+void Delete(int i, List PtrL)
+{
+    int j;
+    //检查空表及删除位置
+    if (i < 1 || i > PtrL->Last + 1)
+    {
+        printf("不存在第%d个元素", i);
+        return;
+    }
+    //将每个删除位置后的元素向前移一个
+    for (j = i; j <= PtrL->Last; j++)
+    {
+        PtrL->Data[j - 1] = PtrL->Data[j];
+    }
+    //让Last指向最后一个数据
+    PtrL->Last--;
+}
+
+int main()
+{
+    struct LNode *L;
+    L = MarkEmpty();
+    L->Last = 20;
+    int i;
+
+    printf("请输入数组元素：\n");
+    for (i = 0; i < L->Last; i++)
+    {
+        scanf("%d", &L->Data[i]);
+    }
+
+    for (i = 0; i < L->Last; i++)
+    {
+        printf("%d ", L->Data[i]);
+    }
+
+    //查找元素位置
+    int find;
+    printf("\n输入待查找元素：\n");
+    scanf("%d", &find);
+    find = Find(find, L);
+    printf("%d\n", find);
+
+    int X;
+    printf("请输入插入元素和插入位置：\n");
+    scanf("%d%d", &X, &i);
+    Insert(X, i, L);
+
+    for (i = 0; i < L->Last; i++)
+    {
+        printf("%d ", L->Data[i]);
+    }
+
+    printf("\n请输入删除位置：\n");
+    scanf("%d", &i);
+    Delete(i, L);
+
+    for (i = 0; i < L->Last; i++)
+    {
+        printf("%d ", L->Data[i]);
+    }
+    return 0;
+}
