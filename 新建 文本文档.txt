@@ -554,3 +554,96 @@ int main()
     }
     return 0;
 }
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+//堆栈的实现
+//创建顺序类型堆栈
+
+//创建顺序类型堆栈数据结构
+struct SNode
+{
+    //创建存储数据的数组
+    int *date;
+    //创建栈顶指针
+    int top;
+    //堆栈最大容量
+    int max_size;
+};
+typedef struct SNode *Stack;
+
+//初始化顺序栈
+Stack CreateStack(int max_size)
+{
+    //给线性表分配内存
+    Stack S = (Stack)malloc(sizeof(struct SNode));
+    //给数组分配内存
+    S->date = (int *)malloc(max_size * sizeof(int));
+    S->max_size = max_size;
+    //将top调到-1
+    S->top = -1;
+    return S;
+}
+
+//入栈操作Push
+void Push(int item, Stack PtrL)
+{
+    //判断堆栈满没满，满则退出，没满则入栈
+    if (PtrL->top == PtrL->max_size - 1)
+    {
+        printf("堆栈已满！\n");
+        return;
+    }
+    else
+    {
+        PtrL->top++;
+        PtrL->date[PtrL->top] = item;
+        return;
+    }
+}
+
+//出栈操作Pop
+int Pop(Stack PtrL)
+{
+    //判断堆栈是否为空
+    if (PtrL->top == -1)
+    {
+        printf("堆栈为空！\n");
+        return NULL;
+    }
+    else
+    {
+        int item;
+        item = PtrL->date[PtrL->top];
+        PtrL->top--;
+        return item;
+    }
+}
+
+int main()
+{
+    int max_size, i, s;
+    printf("输入栈的长度：\n");
+    scanf("%d", &max_size);
+    struct SNode *stack1 = CreateStack(max_size);
+    for (i = 1; i <= max_size; i++)
+    {
+        s = i * 2 + 1;
+        Push(s, stack1);
+    }
+    int item;
+    item = Pop(stack1);
+    while (item != NULL)
+    {
+        printf("%d ", item);
+        item = Pop(stack1);
+    }
+    return 0;
+}
