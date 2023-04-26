@@ -647,3 +647,137 @@ int main()
     }
     return 0;
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+//堆栈的实现
+//创建顺序类型堆栈
+
+//创建二项顺序类型堆栈数据结构
+struct SNode
+{
+    //创立储存元素的数组
+    int *data;
+    //创建两个栈顶指针，一个在表前，一个在表后
+    int top1;
+    int top2;
+    //堆栈长度
+    int max_size;
+};
+typedef struct SNode *Stack;
+
+//创建双向堆栈
+Stack CreateStackTwo(int max_size)
+{
+    //给堆栈分配内存
+    Stack S = (Stack)malloc(sizeof(struct SNode));
+    //给数组分配内存
+    S->data = (int *)malloc(max_size * sizeof(int));
+    S->max_size = max_size;
+    //将top1调到-1
+    S->top1 = -1;
+    //将top2调到max_size
+    S->top2 = max_size;
+    return S;
+}
+
+//双向堆栈入栈操作
+void PushTwo(Stack PtrL, int item, int Tag)
+{
+    //判断堆栈是否堆满
+    if (PtrL->top1 + 1 == PtrL->top2)
+    {
+        printf("堆栈已满！\n");
+        return;
+    }
+    else
+    {   //Tag作为区分两个堆栈的标志，取值为1和2
+        if (Tag == 1)
+        {
+            PtrL->top1++;
+            PtrL->data[PtrL->top1] = item;
+        }
+        else
+        {
+            PtrL->top2--;
+            PtrL->data[PtrL->top2] = item;
+        }
+    }
+}
+
+//双向堆栈出栈操作
+int PopTwo(Stack PtrL, int Tag)
+{
+    int item;
+   //Tag作为区分两个堆栈的标志，取值为1和2
+   if (Tag == 1)
+   {
+        //判断第一个堆栈是否为空
+        if (PtrL->top1 == -1)
+        {
+            printf("堆栈1已空！\n");
+            return NULL;
+        }
+        else
+        {
+            item = PtrL->data[PtrL->top1];
+            PtrL->top1--;
+            return item;
+        }
+   } 
+   else
+   {
+        //判断第二个堆栈是否为空
+        if (PtrL->top2 == PtrL->max_size)
+        {
+            printf("堆栈2已空！\n");
+            return NULL;
+        }
+        else
+        {
+            item = PtrL->data[PtrL->top2];
+            PtrL->top2++;
+            return item;
+        }
+   }
+}
+
+int main()
+{
+    int max_size, i, s1, s2;
+    printf("输入栈的长度：\n");
+    scanf("%d", &max_size);
+    struct SNode *stack1 = CreateStackTwo(max_size);
+    for (i = 1; i <= max_size / 2; i++)
+    {
+        s1 = i * 2 + 1;
+        PushTwo(stack1, s1, 1);
+    }
+    for (i = max_size / 2 + 1; i <= max_size; i++)
+    {
+        s2 = i + 2;
+        PushTwo(stack1, s2, 2);
+    }
+
+    int item;
+    item = PopTwo(stack1, 1);
+    while (item != NULL)
+    {
+        printf("%d ", item);
+        item = PopTwo(stack1, 1);
+    }
+    printf("\n");
+    item = PopTwo(stack1, 2);
+    while (item != NULL)
+    {
+        printf("%d ", item);
+        item = PopTwo(stack1, 2);
+    }
+    return 0;
+}
