@@ -781,3 +781,92 @@ int main()
     }
     return 0;
 }
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+//堆栈的链式储存实现
+//创建链栈的数据结构
+struct SNode
+{
+    int data;
+    struct SNode *next;
+};
+typedef struct SNode *Stack;
+
+//创建堆栈头节点
+Stack CreateStack()
+{
+    Stack header;
+    //给头节点分配内存
+    header = (Stack)malloc(sizeof(struct SNode));
+    header->data = -1;
+    header->next = NULL;
+    return header;
+}
+
+//将元素压入栈顶
+void Push(Stack S, int item)
+{
+    //创建辅助指针
+    Stack pCurrent;
+    //创建节点
+    pCurrent = (Stack)malloc(sizeof(struct SNode));
+    pCurrent->data = item;
+    //将头节点后的数据放在新节点后面
+    pCurrent->next = S->next;
+    S->next = pCurrent;
+}
+
+//删除并返回栈顶元素
+int Pop(Stack S)
+{
+    //创建辅助堆栈指针1
+    Stack pCurrent;
+    pCurrent = S->next;
+    //判断堆栈是否为空
+    if (pCurrent->data == -1)
+    {
+        printf("堆栈已空！\n");
+        return NULL;
+    }
+    else
+    {
+        int item;
+        //删除并返回数据
+        
+        S->next = pCurrent->next;
+        item = pCurrent->data;
+        //释放指向节点内存
+        free(pCurrent);
+        //返回数据
+        return item;
+    }
+}
+
+int main()
+{
+    Stack PtrL;
+    PtrL = CreateStack();
+    int item, i;
+    for (i = 1; i <= 10; i++)
+    {
+        //输入数据，压入栈中
+        printf("请输入数据：\n");
+        scanf("%d", &item);
+        Push(PtrL, item);
+    }
+    item = Pop(PtrL);
+    while (item != NULL)
+    {
+        printf("%d ", item);
+        item = Pop(PtrL);
+    }
+    return 0;
+}
