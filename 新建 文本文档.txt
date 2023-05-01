@@ -1138,3 +1138,75 @@ int main()
         }
     }
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+//循环队列的创建与插入的删除
+
+//创建顺序结构数据类型
+struct SNode
+{
+    int data[10];
+    //创建头元素位置变量
+    int front;
+    //创建尾元素变量
+    int rear;
+};
+typedef struct SNode *QNode;
+
+//入队列函数
+void AddQ(QNode PtrQ, int item)
+{
+    //判断队列满没满
+    if ((PtrQ->rear + 1) % 10 == PtrQ->front)
+    {
+        printf("队列已满！\n");
+        return;
+    }
+    //将新增元素放在队尾，并将队尾变量加一
+    PtrQ->rear = (PtrQ->rear + 1) % 10;
+    PtrQ->data[PtrQ->rear] = item;
+}
+
+//出队列函数
+int DeleteQ(QNode PtrQ)
+{
+    //判断队列空没空
+    if (PtrQ->front == PtrQ->rear)
+    {
+        printf("队列已空！\n");
+        return 1;
+    }
+    else
+    {
+        //将队首元素返回，并将队首变量加一
+        PtrQ->front = (PtrQ->front + 1) % 10; 
+        int item;
+        item = PtrQ->data[PtrQ->front];
+        return item;
+    }    
+}
+
+int main()
+{
+    QNode p_arr = (QNode)malloc(sizeof(struct SNode));
+    p_arr->front = 0;
+    p_arr->rear = 0;
+    int i, item;
+    for (i = 1; i <= 9; i++)
+    {
+        scanf("%d", &item);
+        AddQ(p_arr, item);
+    }
+    for (i = 1; i <= 9; i++)
+    {
+        item = DeleteQ(p_arr);
+        printf("%d ", item);
+    }
+    return 0;
+} 
