@@ -1210,3 +1210,101 @@ int main()
     }
     return 0;
 } 
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+//队列的链式存储实现
+
+//创建基本数据类型
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+//创建队列指针数据类型
+struct QNode
+{
+    //创建队尾指针
+    struct Node *rear;
+    //创建队首指针
+    struct Node *front;
+};
+typedef struct QNode *Queue;
+
+//出队函数
+int DeleteQ(Queue PtrQ)
+{
+    //创建队首指针和队首数据域变量
+    struct Node *front_cell;
+    int front_item;
+    //判断队列是否为空
+    if (PtrQ->front == NULL)
+    {
+        printf("队列已空！\n");
+        return 0;
+    }
+    //让队首指针指向要删除节点
+    front_cell = PtrQ->front;
+    //如果队列只有一个元素，删除后让队列为空,否则头节点指向下一个节点
+    if (PtrQ->front == PtrQ->rear)
+        PtrQ->front = PtrQ->rear = NULL;
+    else
+        PtrQ->front = PtrQ->front->next;
+    //将要删除元素赋给队首数据域变量
+    front_item = front_cell->data;
+    //释放待删除节点内存
+    free(front_cell);
+    //返回数据域变量
+    return front_item;
+}
+
+//入队函数
+void AddQ(Queue PtrQ, int item)
+{
+    //创建节点辅助指针
+    struct Node *pCurrent;
+    //为其分配内存，并将数据存入数据域
+    pCurrent = malloc(sizeof(struct Node));
+    pCurrent->data = item;
+    pCurrent->next = NULL;
+    //假如队列为空
+    if (PtrQ->front == NULL)
+    {
+        PtrQ->front = pCurrent;
+        PtrQ->rear = pCurrent;
+        return;
+    }
+    else
+    {
+        //否则将新节点连接在队尾，并将队尾指针指向新节点
+        PtrQ->rear->next = pCurrent;
+        PtrQ->rear = pCurrent;
+        return;
+    }
+}
+int main()
+{
+    Queue PtrQ;
+    PtrQ = malloc(sizeof(struct QNode));
+    PtrQ->front = NULL;
+    PtrQ->rear = NULL;
+    int i, item;
+    for (i = 1; i <= 10; i++)
+    {
+        scanf("%d", &item);
+        AddQ(PtrQ, item);
+    }
+    item = DeleteQ(PtrQ);
+    while (item != 0)
+    {
+        printf("%d ", item);
+        item = DeleteQ(PtrQ);
+    }
+    return 0;
+} 
