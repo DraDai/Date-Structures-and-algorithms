@@ -1411,3 +1411,34 @@ Polynomial PolyAdd(Polynomial p1, Polynomial p2)
     free(temp);
     return front;
 }
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define Max_size 10
+//静态查找
+
+//定义数组数据类型
+struct Node
+{
+    int arr[Max_size];
+    int length;
+};
+typedef struct Node *List;
+List PtrQ;
+
+//顺序查找函数
+int Sqt_srch(List PtrQ, int K)
+{
+    int i;
+    //建立哨兵，碰到哨兵退出循环
+    PtrQ->arr[0] = K;
+    //从末尾向前查找
+    for (i = PtrQ->length; PtrQ->arr[i] != K; i--)
+        return i;
+    if (i == 0)
+        return 0;
+}
