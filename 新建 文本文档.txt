@@ -1442,3 +1442,48 @@ int Sqt_srch(List PtrQ, int K)
     if (i == 0)
         return 0;
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define Max_size 10
+//二分查找法
+
+//定义数组数据类型
+struct Node
+{
+    int arr[Max_size];
+    int length;
+};
+typedef struct Node *List;
+List PtrQ;
+
+//二分查找函数
+//数组内元素一定是从小到大排序好的
+int BinarySearch(List PtrQ, int K)
+{
+    //定义左变量，右变量，中间变量
+    int left, right, mid;
+    left = 1;
+    right = PtrQ->length;
+    //当右变量下标大于左变量的时
+    while (left <= right)
+    {
+        //计算中间变量下标
+        mid = (left + right) / 2;
+        //如果K大于中间变量
+        if (K > PtrQ->arr[mid])
+            left = mid + 1;
+        //如果K小于中间变量
+        else if (K < PtrQ->arr[mid])
+            right = mid - 1;
+        //如果K等于中间变量
+        else    
+            return mid;
+    }
+    return -1;
+}
