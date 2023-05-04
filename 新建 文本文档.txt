@@ -1487,3 +1487,24 @@ int BinarySearch(List PtrQ, int K)
     }
     return -1;
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define Max_size 10
+
+//二叉树的链表储存结构
+struct TreeNode
+{
+    int data;
+    //定义指向左节点和右节点的指针
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+typedef struct TreeNode *BinTree;
+typedef BinTree Position;
+
