@@ -1565,3 +1565,125 @@ void PostOderTraversal(BinTree BT)
         printf("%d ", BT->data); 
     }
 }
+
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define Max_size 10
+
+//利用堆栈先序中序非递归遍历二叉树
+
+//二叉树的链表储存结构
+struct TreeNode
+{
+    int data;
+    //定义指向左节点和右节点的指针
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+typedef struct TreeNode *BinTree;
+typedef BinTree Position;
+
+//创建堆栈数据类型
+struct SNode
+{
+    int data;
+    struct SNode *next;
+};
+typedef struct SNode *Stack;
+
+//初始化堆栈
+Stack CreateStack()
+{
+    Stack header = (Stack)malloc(sizeof(struct SNode));
+    header->data = -1;
+    header->next = NULL;
+    return header;
+}
+
+//压栈
+void Push(Stack S, int item)
+{
+    Stack pCurrent = (Stack)malloc(sizeof(struct SNode));
+    pCurrent->data = item;
+    pCurrent->next = S->next;
+    S->next = pCurrent;
+}
+
+//出栈
+int Pop(Stack S)
+{
+    Stack pCurrent;
+    pCurrent = S->next;
+    if (pCurrent == NULL)
+    {
+        printf("堆栈已空！\n");
+        return NULL;
+    }
+    else
+    {
+        int item;
+        item = pCurrent->data;
+        S->next = pCurrent->next;
+        free(pCurrent);
+        return item;
+    }
+}
+
+//利用堆栈实现先序遍历二叉树
+void InOrderTraversal(BinTree BT)
+{
+    //创建二叉树辅助指针
+    BinTree T = BT;
+    //创建一个存二叉树数据的堆栈并初始化
+    Stack S = CreateStack();
+    //当二叉树节点和堆栈都不为空时
+    while (T != NULL && S->next != NULL)
+    {
+        //如果二叉树节点左边不为空，那么就一直向左压栈
+        while (T != NULL)
+        {
+            Push(S, T->data);
+            T = T->left;
+        }
+        //如果二叉树节点左边为空，就让这个元素出栈，再指向右边
+        if (S->next != NULL)
+        {
+            T = Pop(S);
+            printf("%5d", T->data);
+            T = T->right;
+        }
+    }
+}
+
+//利用堆栈实现中序遍历二叉树
+void InOrderTraversal(BinTree BT)
+{
+    //创建二叉树辅助指针
+    BinTree T = BT;
+    //创建一个存二叉树数据的堆栈并初始化
+    Stack S = CreateStack();
+    //当二叉树节点和堆栈都不为空时
+    while (T != NULL && S->next != NULL)
+    {
+        //如果二叉树节点左边不为空，那么就一直向左压栈
+        while (T != NULL)
+        {
+            Push(S, T->data);
+            printf("%5d", T->data);
+            T = T->left;
+        }
+        //如果二叉树节点左边为空，就让这个元素出栈，再指向右边
+        if (S->next != NULL)
+        {
+            T = Pop(S);
+            T = T->right;
+        }
+    }
+}
