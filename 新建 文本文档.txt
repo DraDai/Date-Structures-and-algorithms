@@ -1508,3 +1508,60 @@ struct TreeNode
 typedef struct TreeNode *BinTree;
 typedef BinTree Position;
 
+
+
+
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#define Max_size 10
+
+//先序中序后序递归遍历二叉树
+//二叉树的链表储存结构
+struct TreeNode
+{
+    int data;
+    //定义指向左节点和右节点的指针
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+typedef struct TreeNode *BinTree;
+typedef BinTree Position;
+
+//先序递归遍历二叉树
+void PreOrderTraversal(BinTree BT)
+{
+    if (BT != NULL)
+    {
+        printf("%d ", BT->data);
+        PreOrderTraversal(BT->left);
+        PreOrderTraversal(BT->right);
+    }
+}
+
+//中序遍历二叉树
+void InOrderTraversal(BinTree BT)
+{
+    if (BT != NULL)
+    {
+        InOrderTraversal(BT->left);
+        printf("%d ", BT->data);
+        InOrderTraversal(BT->right);
+    }
+}
+
+//后序遍历二叉树
+void PostOderTraversal(BinTree BT)
+{
+    if (BT != NULL)
+    {
+        PostOderTraversal(BT->left);
+        PostOderTraversal(BT->right);
+        printf("%d ", BT->data); 
+    }
+}
