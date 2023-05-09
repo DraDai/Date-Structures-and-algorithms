@@ -1687,3 +1687,110 @@ void InOrderTraversal(BinTree BT)
         }
     }
 }
+
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+//利用队列进行二叉树层序遍历
+
+//创建二叉树结构类型
+struct TreeNode
+{
+    int data;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+typedef struct TreeNode *BinTree;
+typedef BinTree Position;
+
+//创建队列结构类型
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+
+struct QNode
+{
+    struct Node *rear;
+    struct Node *front;
+};
+typedef struct QNode *Queue;
+
+//出队函数
+int DeleteQ(Queue PtrQ)
+{
+    struct Node *front_cell;
+    int front_item;
+    if (PtrQ->front == NULL)
+    {
+        printf("队列已空！\n");
+        return NULL;
+    }
+    front_cell = PtrQ->front;
+    if (PtrQ->front == PtrQ->rear)
+        PtrQ->front = PtrQ->rear = NULL;
+    else
+        PtrQ->front = PtrQ->front->next;
+    front_item = front_cell->data;
+    free(front_cell);
+    return front_item;
+}
+
+//入队函数
+void AddQ(Queue PtrQ, int item)
+{
+    struct Node *rear_cell;
+    rear_cell = malloc(sizeof(struct Node));
+    rear_cell->data = item;
+    rear_cell->next = NULL;
+    if (PtrQ->front == NULL)
+    {
+        PtrQ->front = rear_cell;
+        PtrQ->rear = rear_cell;
+        return;
+    }
+    else
+    {
+        PtrQ->rear->next = rear_cell;
+        PtrQ->rear = rear_cell;
+        return;
+    }
+}
+
+//层序遍历二叉树函数
+void LevelOrderTraversal(BinTree BT)
+{
+    //创建一个队列
+    Queue Q;
+    BinTree T = BT;
+    int item;
+    //如果是空树直接返回
+    if (BT == NULL)
+        return;
+    //将树根存入队列
+    AddQ(Q, T->data);
+    //如果队列不空
+    while (Q->front != NULL)
+    {
+        //输出队列首元素
+        item = DeleteQ(Q);
+        printf("%d ", item);
+        //存入子节点
+        if (T->left != NULL)
+        {
+            AddQ(Q, T->left->data);
+            T = T->left;
+        }
+        if (T->right != NULL)
+        {
+            AddQ(Q, T->right->data);
+            T = T->right;
+        }
+    }
+}
