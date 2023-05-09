@@ -1794,3 +1794,79 @@ void LevelOrderTraversal(BinTree BT)
         }
     }
 }
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+//二叉搜索树的查找
+
+//创建二叉树数据类型
+struct TreeNode
+{
+    int data;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+typedef struct TreeNode *BinTree;
+typedef BinTree Position;
+
+//二叉搜索树的递归查找函数
+Position Find(int item, BinTree BST)
+{
+    //假如树根为空
+    if (BST == NULL)
+        return NULL;
+    //如果待查找数大于树根元素，那么在右子树中查找
+    if (item > BST->data)
+        return Find(item, BST->right);
+    //如果待查找数小于树根元素，那么在左子树中查找
+    else if (item < BST->data)
+        return Find(item, BST->left);
+    //如果待查找数等于树根元素，那么返回树根
+    else
+        return BST;
+}
+
+//二叉搜索树的循环查找函数
+Position WhileFind(int item, BinTree BST)
+{
+    while (BST != NULL)
+    {
+        if (item > BST->data)
+            BST = BST->right;
+        else if (item < BST->data)
+            BST = BST->left;
+        else
+            return BST;
+    }
+    return NULL;
+}
+
+//二叉搜索树最小值的递归查找函数
+Position FindMin(BinTree BST)
+{
+    //如果二叉搜索树为空
+    if (BST == NULL)
+        return NULL;
+    //否则找到最左叶节点并返回
+    if (BST->left == NULL)
+        return BST;
+    else
+        return FindMin(BST->left);
+}
+
+//二叉搜索树最小值的循环查找函数
+Position WhileFindMin(BinTree BST)
+{
+    if (BST == NULL)
+        return NULL;
+    while(BST->left != NULL)
+        BST = BST->left;
+    return BST;
+}
+
+//找最大值与前面同理，找最右节点就行了
