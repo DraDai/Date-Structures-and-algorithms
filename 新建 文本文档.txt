@@ -2371,3 +2371,32 @@ void Build_Heap(Max_Heap H)
         Perc_Down(H, i);
     }
 }
+
+struct HTNode
+{
+    int Weight;		//结点权值
+    struct HTNode *Left;	//指向左子树
+    struct HTNode *Right;	//指向右子树
+};
+typedef struct HTNode *Huffman_Tree;	//哈夫曼树类型
+
+Huffman_Tree Huffman(MinHeap H)
+{
+    //这里最小堆的元素类型为Huffman_Tree
+    //假设H->size个权值已经存进H->Data[]->Weight中
+    int i, N;
+    Huffman_Tree T;
+    
+    Build_Heap(H);	//将H->Data[]按权值Weight调整为最小堆
+    N = H->Size;
+    for(i = 1; i < N; i++)
+    {
+        //做H->Size-1次合并
+        T = (Huffman_Tree)malloc(sizeof(struct HTNode));	//建立一个新节点
+        T->Left = Delete_Min(H);	//从最小堆中拿出最小权值作为T的左子树
+        T->Right = Delete_Min(H);	//从最小堆中拿出最小权值作为T的右子树
+        T->Weight = T->Left->Weight + T->Right->Weight;	//权值相加
+        Insert(H, T);	//将新T插入最小堆
+    }
+    return Delete_Min(H);	//返回哈夫曼树根节点指针
+}
