@@ -2245,3 +2245,129 @@ BinTree CreatBinTree()
     }
     return BT;
 }
+
+//堆的结构
+struct HNode
+{
+    ElementType *Data;	//存储元素的数组
+    int Size;			//堆当前元素个数
+    int Capacity;		//堆的最大容量
+};
+typedef struct HNode *Heap;	//堆结构的定义
+typedef Heap Max_Heap;	//最大堆
+typedef Heap Min_Heap;	//最小堆
+
+#define MAX_DATA 1000	//此值应该根据具体情况定义为大于堆中所有可能元素的值
+
+//创建容量为Max_Size的空的最大堆
+Max_Heap Create_Heap(int Max_Size)
+{
+    Max_Heap H = (Max_Heap)malloc(sizeof(struct HNode));
+    H->Data = (ElementType *)malloc((Max_Size + 1) * sizeof(ElementType));
+    H->Size = 0;
+    H->Capacity = Max_Size;
+    H->Data[0] = MAX_DATA;	//定义“哨兵”为大于堆中所有可能元素的值
+    
+    return H;
+}
+
+//判断最大堆是否已满
+bool Is_Full(Max_Heap H)
+{
+    return (H->Size == H->Capacity);
+}
+
+//最大堆的插入
+bool Insert(Max_Heap H, ElementType X)
+{
+    int i;
+    
+    if(Is_Full(H))
+    {
+        printf("最大堆已满\n");
+        return false;
+    }
+    i = H->Size + 1;	//i指向插入后堆中最后一个元素的位置
+    for( ; H->Data[i / 2] < X; i /= 2)
+        H->Data[i] = H->Data[i / 2];	//上滤X
+    H->Data[i] = X;		//将X插入
+    
+    return true;
+}
+
+//判断最大堆是否为空
+bool Is_Empty(Max_Heap H)
+{
+    return (H->Size == 0);
+}
+
+#define ERROR -1	//错误标识应定义为堆中不可能出现的元素
+
+//取出键值最大的元素，并删除一个结点
+ElementType Delete_Max(Max_Heap H)
+{
+    int Parent, Child;
+    ElementType Max_Item, X;
+    
+    if(Is_Empty(H))
+    {
+        printf("最大堆已空\n");
+        return ERROR;
+    }
+    
+    Max_Item = H->Data[1];	//取出根节点存放的最大值
+    //用最大堆最后一个元素放在根节点，然后下滤结点
+    X = H->Data[H->Size];
+    H->Size--;	//规模要减少
+    for(Parent = 1; Parent * 2 <= H->Size; Parent = Child)
+    {
+        Child = Parent * 2;
+        if((Child != H->Size) && (H->Data[Child] < H->Data[Child + 1]))	
+            Child++;	//Child指向左右子树的较大者
+        if(X >= H->Data[Child])
+           break;	//找到了合适位置
+        else	//下滤
+            H->Data[Parent] = H->Data[Child];
+    }
+    H->Data[Parent] = X;
+    
+    return Max_Item;
+}
+
+//最大堆的建立
+//第一步：将N个元素按顺序存入二叉树中，这一步只要求满足完全二叉树的特性，不管它是否有序
+//第二步：调整各节点元素，以满足最大堆特性
+//这种方法比一个一个插入元素高效
+void Perc_Down(Max_Heap H, int p)
+{
+    //下滤：将H中以H->Data[p]为根的子堆调整为最大堆
+    int Parent, Child;
+    ElementType X;
+    
+    X = H->Data[p];	//取出根节点存放的值
+    for(Parent = p; Parent * 2 <= H->Size; Parent = Child)
+    {
+        Child = Parent * 2;
+        if((Child != H->Size) && (H->Data[Child] < H->Data[Child + 1]))
+            Child++;
+        if(X > H->Data[Parent])
+            break;
+        else
+            H->Data[Parent] = H->Data[Child];
+    }
+    H->Data[Parent] = X;
+}
+
+void Build_Heap(Max_Heap H)
+{
+    //调整堆中的元素，使其满足最大堆特性
+    //这里假设所有元素已存入堆中
+    
+    int i;
+    
+    for(i = H->Size / 2; i > 0; i--)
+    {
+        //从最后一个结点的父结点开始，到根节点1
+        Perc_Down(H, i);
+    }
+}
