@@ -2400,3 +2400,86 @@ Huffman_Tree Huffman(MinHeap H)
     }
     return Delete_Min(H);	//返回哈夫曼树根节点指针
 }
+
+#include<stdio.h>
+#include<stdlib.h>
+//创建二叉树结构
+struct TNode
+{
+    int Data;
+    struct TNode *Left;
+    struct TNode *Right;
+};
+typedef struct TNode *Bin_Tree;
+
+//利用中序和后序遍历结果创建二叉树
+Bin_Tree Build(int post_order[], int in_order[], int post_start, int post_end, int in_start, int in_end);
+//先序遍历
+void Preorder_Traversal(Bin_Tree BT);
+//根据后序和中序遍历输出先序遍历
+int main()
+{
+    //输入结点个数
+    int N, i;
+    scanf("%d", &N);
+
+    int post_order[N];   //后序遍历结果
+    int in_order[N];    //中序遍历结果
+
+    for(i = 0; i < N; i++)
+    {
+        scanf("%d", &post_order[i]);
+    }
+
+    for (int i = 0; i < N; i++) 
+    {
+        scanf("%d", &in_order[i]);
+    }
+    //利用中序和后序遍历结果创建二叉树
+    Bin_Tree BT = Build(post_order, in_order, 0, N - 1, 0, N - 1);
+    //先序遍历二叉树
+    printf("Preorder:");
+    Preorder_Traversal(BT);
+    return 0;
+}
+
+Bin_Tree Build(int post_order[], int in_order[], int post_start, int post_end, int in_start, int in_end)
+{
+    // 如果后序遍历的起始位置大于结束位置，说明已经没有节点了，返回NULL
+    if (post_start > post_end) 
+    {
+        return NULL;
+    }
+    //创建根节点
+    //后序遍历得最后一个数就是根节点
+    Bin_Tree BT = (Bin_Tree)malloc(sizeof(struct TNode));
+    BT->Data = post_order[post_end];
+    BT->Left = NULL;
+    BT->Right = NULL;
+
+    //找到根节点在中序遍历的位置
+    int root;
+    for(root = in_start; root <= in_end; root++)
+    {
+        if(in_order[root] == BT->Data)
+            break;
+    }
+
+    //计算左子树结点的个数
+    int left_size = root - in_start;
+
+    //递归创建左子树和右子树
+    BT->Left = Build(post_order, in_order, post_start, post_start + left_size - 1, in_start, root - 1);
+    BT->Right = Build(post_order, in_order, post_start + left_size, post_end - 1, root + 1, in_end);
+
+    return BT;
+}
+
+void Preorder_Traversal(Bin_Tree BT)
+{
+    if(BT == NULL)
+        return;
+    printf(" %d", BT->Data);
+    Preorder_Traversal(BT->Left);
+    Preorder_Traversal(BT->Right);
+}
