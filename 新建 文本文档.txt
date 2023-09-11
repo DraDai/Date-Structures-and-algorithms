@@ -2483,3 +2483,194 @@ void Preorder_Traversal(Bin_Tree BT)
     Preorder_Traversal(BT->Left);
     Preorder_Traversal(BT->Right);
 }
+
+
+//邻接矩阵的存储结构
+#define MaxVertexNum 100	//定义顶点的最大数
+typedef char VertexType;	//顶点的数据类型
+typedef int EdgeType;	//带权图中边上权值的数据类型
+struct GNode
+{
+    VertexType Vex[MaxVertexNum];	//顶点表
+    EdgeType Edge[MaxVertexNum][MaxVertexNum];`//邻接矩阵，边表
+    int vexnum;	//顶点数
+    int arcnum;	//边数
+};
+typedef struct GNode MGraph;	//图类型
+
+//创建图
+
+#defind IFINITY 65535	//将无穷设为无符号整数最大值
+typedef int Vertex;	//用顶点下标表示顶点，为整型
+
+//边的定义
+struct ENode
+{
+    Vertex V1, V2;	//有向边<V1, V2>
+    WeightType Weight;	//边的权值
+};
+typedef struct ENode *Edge;
+
+//初始化一个有VertexNum个顶点但没有边的图
+MGraph CreateGragh(int VertexNum)
+{
+    Vertex V, W;
+    MGraph Graph;
+    
+    Graph = (MGraph)malloc(sizeof(struct GNode));	//建立图
+    Graph->vexnum = VertexNum;
+   	Graph->arcnum = 0;
+    //初始化邻接矩阵
+    for(V = 0; V < Graph->vexnum; V++)
+        for(W = 0; W < Graph->arcnum; W++)
+            Graph->G[V][W] = INFINITY;
+    
+    return Graph;
+}
+
+//插入边
+void InsertEdge(MGraph Graph, Egde E)
+{
+    Graph->G[E->V1][E->V2] = E->Weight;
+}
+
+//构建图
+MGraph BuildGraph()
+{
+    MGraph Graph;
+    Edge E;
+    Vertex V;
+    int Nv, i;
+    
+    printf("输入顶点个数：");
+    scanf("%d", &Nv);
+    
+    Graph = CreateGraph(Nv);	//初始化图
+    
+    printf("输入边数：");
+    scanf("%d", &(Graph->arcnum));
+    if(Graph->arcnum != 0)	//如果有边
+    {
+        E = (Edge)malloc(sizeof(struct ENode));
+        //读入边
+        for(i = 0; i < Graph->arcnum; i++)
+        {
+            printf("输入起点、终点、权重：");
+            scanf("%d %d %d", &E->V1, &E->V2, &E->Weight);
+            //插入边
+            InsertEdge(Graph, E);
+        }
+    }
+    //读入顶点数据
+    for(V = 0; V < Graph->vexnum; V++)
+    {
+        printf("输入顶点数据：");
+        scanf("%c", &Graph->Vex[V]);
+    }
+    return Graph;
+}
+
+
+
+
+#define MaxVertexNum 100	//最大顶点数设为100
+typedef int Vertex;		//用顶点下标表示顶点
+typedef int WeightType;		//边的权值设为整型
+typedef char DataType;		//顶点存储数据类型设为字符型
+
+//边的定义
+struct ENode
+{
+    Vertex V1, V2;		//边<v1, v2>
+    WeightType Weight;	//边的权值
+};
+typedef struct ENode *Edge;		//设置为边结构
+
+//边表的定义
+struct AdjVNode
+{
+    Vertex V;				//顶点下标
+    WeightType Weight;		//边权值
+    struct AdjVNode *Next;	//指向下一邻接结点的指针
+};
+typedef struct AdjVNode *AdjV;	//设置为邻接点结点结构
+
+//顶点表头定义
+struct VNode
+{
+    Adjv FristEdge;		//指向下一邻接结点的指针
+    Datatype Data;		//结点权值
+};
+typedef struct VNode AdjList[MaxVertexNum];	//设置为邻接表结构
+
+//图节点定义
+struct GNode
+{
+    int VertexNum;	//顶点数
+    int EdgeNum;	//边数
+    AdjList AL;		//邻接表
+};
+typedef struct GNode *LGraph;	//设置为邻接表图类型
+
+//创建没有边的图
+LGraph CreateLGraph(int VertexNum)
+{
+    int i;
+    LGraph G;	//创建图
+    G = (LGraph)malloc(sizeof(strcut GNode));	//赋予空间
+    G->VertexNum = MaxVertexNum;	//输入顶点数
+    G->EdgeNum = 0;	//边为0
+    //给每个表头置空
+    for(i = 0; i < G->VertexNum; i++)
+        G->AL[i] = NULL;
+    
+    return G;
+}
+
+//插入边
+void InsertEdge(LGraph G, Edge E)
+{
+    //当图为有向图时，插入边<v1, v2>
+    AdjV NewNode;	//建立V2结点
+    NewNode = (AdjV)malloc(sizeof(struct AdjVNode));	//赋予空间
+    NewNode->V = E->V2;		//存入下标
+    NewNode->Weight = E->Weight;	//存入边权值
+    //将邻接结点插入头节点V1
+    NewNode->Next = G->AL[E->V1].FirstEdge;
+    G->AL[E->V1].FirstEdge = NewNode;
+    
+    //如果图为无向图，还需把V1插入V2
+    AdjV New2;
+    New2 = (AdjV)malloc(sizeof(struct AdjVNode));
+    New2->V = E->V1;
+    New2->Weight = E->Weight;
+    New2->Next = G->AL[E->V2].FirstEdge;
+    G->AL[E->V2].FirstEdge = New2;
+}
+
+//创建图·
+LGraph BuildLGraph()
+{
+    int i, VertexNum;
+    LGraph G;
+    Edge E;
+    
+    printf("请输入顶点数：");
+    scanf("%d", &VertexNum);
+    G = CreateLGraph(VertexNum);
+    
+    printf("请输入边数：");
+    scanf("%d", &G->EdgeNum);
+    
+    if(G->EdgeNum != 0)
+    {
+        E = (Edge)malloc(sizeof(struct ENode));
+        for(i = 0; i < G->EdgeNum; i++)
+        {
+            scanf("%d%d%d", &E->V1, &E->V2, &E->Weight);
+            InsertEdge(G, E);
+        }
+    }
+    
+    return Graph;
+}
