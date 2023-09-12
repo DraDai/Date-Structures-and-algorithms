@@ -2674,3 +2674,81 @@ LGraph BuildLGraph()
     
     return Graph;
 }
+
+
+//假设图以邻接表的形式储存
+
+//Visited数组记录顶点的探索情况,预先将所有顶点设置为未探索
+bool Visited[MaxVertexNum] = {false};
+
+//访问顶点函数
+void Visit(Vertex V)
+{
+    printf("正在访问结点%d\n", V);
+}
+
+//DFS函数深度优先搜索
+void DFS(LGraph G, Vertes V)
+{
+    //从顶点V出发对图G进行DFS搜索
+    AdjV W;
+    
+    //访问节点V
+    Visit(V);
+    //标记该节点
+    Visited[V] = true;
+    
+    //对V的邻接点进行访问
+    for(W = G->AL[V].FirstEdge; W; W->Next)
+    {
+        //当顶点未被访问时
+        if(Visited[W->V] == false)
+            //递归访问
+            DFS(G, W->V);
+    }
+}
+
+
+
+//假设图以邻接矩阵的方式存储
+
+//Visited数组记录顶点的探索情况,预先将所有顶点设置为未探索
+bool Visited[MaxVertexNum] = {false};
+
+//判断<V,W>是否是边
+bool IsEdge(MGraph G, Vertex V, Vertex W)
+{
+    return (G->Edge[V][W] < INFINITY ? true : false);
+}
+
+//以S为出发点对图进行BFS搜索
+void BFS(MGraph G, Vertex S)
+{
+    Queue Q;
+    Vertex V, W;
+    
+    //创建一个空队列
+    Q = CreateQueue();
+    Visit(S);	//访问该顶点
+    //标记该顶点
+    Visited[S] = true;
+    //S入队
+    AddQ(Q, S);
+    
+    //层序遍历顶点
+    while(!IsEmpty(Q))
+    {
+        //当Q不为空时
+        V = DeleteQ(Q);	//弹出顶点
+        //找到Q的所有邻接点放入队列
+        for(W = 0; W < MGraph->VertexNum; W++)
+        {
+            if(!Visit[W] && IsEdge(G, V, W))
+            {
+                Visit(W);
+                Visited[W] = true;
+                AddQ(W);
+            }
+        }
+    }
+}
