@@ -2752,3 +2752,173 @@ void BFS(MGraph G, Vertex S)
         }
     }
 }
+
+
+
+
+
+//最小生成树肯定是稀疏图，所以最小生成树用邻接表储存
+//这里用邻接矩阵储存原图
+
+#defind ERROR -1	//错误标记，表示生成树不存在
+
+//prime算法，将图的最小生成树保存到邻接表储存的图MST中，返回最小权值或错误信息
+int Prim(MGraph G, LGraph MST)
+{
+    //定义一个数组用来存放下标代表的顶点到其父结点的权值
+    //定义最小权值和
+    WeightType dist[MaxVertexNum], TotalWeight = 0;
+    //定义一个数组来存放下标代表的顶点的父结点
+    Vertex parant[MaxVertexNum], V, W;
+    int VCount;		//VCount表示收录顶点的数量
+    Edge E;
+    
+    //将所有顶点的父结点初始化为V0,并把每个顶点到v0的权值存入
+    for(V = 0; V < G->VertexNum; V++)
+    {
+        dist[V] = G->Edge[0][V];
+        parant[V] = 0;
+    }
+    VCount = 0;
+    
+    //创建一个空的邻接表来表示MST
+    MST = CreateLGragh(G->VertexNum);
+    E = (Edge)malloc(sizeof(struct ENode));
+    
+    dist[0] = 0;	//表示V0已被收录
+    VCount++;
+    parant[0] = -1;		//表示当前树根为V0
+    
+    //核心代码，收录最小权值并更新未收录顶点的父结点
+    while(1)
+    {
+        V = FindMinDist(G, dist);	//找到dist中的最小权值
+        if(V == ERROR)
+            break;	//如果最小权值不存在，则结束算法
+        //将V和相应的边<parant[V], V>收录进MST
+        E->V1 = parent[V];
+        E->V2 = V;
+        E->Weight = dist[V];
+        InsertEdge(MST, E);
+        TotalWeight += dist[V];
+        dist[V] = 0;	//标记V顶点已被收录
+        VCount++;
+        
+        //找到与当上一个被收录顶点相邻的的所有未收录顶点
+        //如果有未收录顶点到上一个被收录节点的边权值比dist数组存的数小，那么更新dist数组，并更新该未收录顶点的父结点
+        for(W = 0; W < G->VertexNum; V++)
+        {
+            if(G->Edge[V][W] < dist[W])
+            {
+                dist[W] = G->Edge[V][W];
+                parant[W] = V;
+            }
+        }
+    }//while结束
+    
+    //如果收录的顶点未满就返回错误信息
+    if(VCount < G->VertexNum)
+        return ERROR;
+    //否则返回最小权值总和
+    return TotalWeight;
+}
+
+//返回dist中未收录顶点最小顶点
+Vertex FindMinDist(MGraph G, WeightType dist[])
+{
+    Vertex MinV, V;
+    WeightType MinDist = INFINITY;
+    
+    for(V = 0; V < G->VertexNum; V++)
+    {
+        if(dist[V] != 0 && dist[V] < MinDist)
+        {
+            MinDist = dist[V];
+            MinV = V；
+        }
+    }
+    if(MinDist < INFINITY)
+        return MinV;
+    else
+        return ERROR;
+}
+
+
+
+
+
+
+//这里用邻接表储存原图和最小生成树
+
+int Kruskal(LGraph G, LGraph MST)
+{
+    //初始化空MST
+    MST = CreateLGraph(G->VertexNum);
+    //设置权重和
+    WeightType Vcount = 0;
+    //设置parant数组，并将其初始化
+    int parant[G->VertexNum] = -1;
+    //设置一个边集，把图的所有边存入边集
+    Edge E[G->EdgeNum]；
+    CreateEdge(G, E);
+    //构造一个包含原图所有边的最小堆
+    MinHeap H = BuildMinHeap(E);
+    //while循环构造最小生成树
+    while(MST->EdgeNum < G->Vertex - 1 && G->EdgeNum != 0)
+    {
+        //从最小堆取一个边
+        Edge E0 = DeleteMinHeap(H);
+        //原图边集中删掉这个边
+        DeleteEdge(G, E0);
+        //确认这个边是否会让MST形成回路
+        if(!Find(parant, E0))
+        //是则丢弃该边
+        //否则将这个边加入MST，并标记顶点
+        {
+            InsertLGraph(MST, E);
+            if(parant[E->V1] == -1)
+                parant[E->V1] = E->V2;
+            if(parant[E->V2] == -1)
+                parant[E->V2] = E->V1;
+        }
+        //增加权重和
+        Vcount += E->Weight;
+        //增加MST收集的边数
+    }
+    //如果MST收集的边不足则返回错误信息
+    if(MST->EdgeNum != G->NertexNum)
+        return ERROR;
+    else
+        return Vcount;
+    //否则返回权重和
+}
+
+//将图G的边存入边集E中
+void CreateEdge(LGraph G, Edge E[])
+{
+    Vertex V, W = 0;
+    for(V = 0; V < G->VerNum; V++)
+    {
+        AdjV H = G->AL[V]->FirstEdge;
+        while(H != NULL)
+        {
+            E[W]->V1 = V;
+        	E[W]->V2 = H->V;
+            E[W]->Weight = H->Weight;
+            W++;
+            H = H->Next;
+        }
+    }
+}
+
+//构造一个包含原图所有边的最小堆
+MinHeap BuildMinHeap(E[]);
+{
+    MinHeap H = CreateMinHeap(G->EdgeNum);
+    int i;
+    for(i = 0; i < G->EdgeNum; i++)
+    {
+        H->Data[i] = E[i];
+    }
+    return H;
+}
