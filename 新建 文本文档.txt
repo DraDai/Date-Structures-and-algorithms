@@ -2922,3 +2922,157 @@ MinHeap BuildMinHeap(E[]);
     }
     return H;
 }
+
+
+
+//利用Dijkstra算法求单源最短路径
+//这里图用邻接矩阵存储
+#defind ERROR -1	//设置报错符号
+#defind INF	65535	//指定权值为无穷的边为INF
+
+//构建最短路径结构
+struct MLNode
+{
+    //源顶点和终顶点
+    Vertex HomeV;
+    Vertex EndV;
+    //包含最短路径中所有经过的顶点的数组
+    Vertex *SumV;
+    //顶点个数
+    int VerNum;
+    //路径总长度
+    WeightType SumLength;
+};
+typedef struct MLNode *MinL;
+//求最短路径函数,函数形参是图、起始顶点和最终顶点
+MinL MinLength(MGraph G, Vertex HV, Vertex EV)
+{
+    //创建一个长度为G->VertexNum的一个parent数组，用来存每个顶点对应的父结点
+    int parent[G->VertexNum];
+    //创建一个长度为VertexNum的一个dist数组，用来存每个顶点到其父结点的权值
+    int dist[G->VertexNum];
+    //利用Dijkatra算法得到parent数组和dist中的元素
+    Dijkatra(G, HV, dist, parent);
+    //调用FindSumV函数得到MinL->SumV和Min->VerNum
+    Vertex *SV;
+    int VN = FindSumV(EV, parent, SV);
+    //调用FindSumL函数得到SumLength
+    WeightType SL = FindSumL(dist, SV);
+    //初始化MinL
+    MinL ML = CreateMinL(ML, HV, EV, SV, VN, SL);
+    return ML;
+}
+
+//Dijkatra算法,构造dist数组和parent数组
+void Dijkatra(MGraph G, Vertex HV, int dist[], int parent[])
+{
+    Vertex V, W;
+    //设置一个mark数组，用来标记已收录的顶点
+    int mark[G->VertexNum];
+    //初始化dist数组，将每个顶点到源顶点的权值存入
+    //初始化parent数组，将与源节点邻接的顶点的父结点设为源节点，不邻接的设为-1
+    //初始化mark数组，将所有顶点设置为未收录
+    for(V = 0; V < G->VertexNum; V++)
+    {
+        dist[V] = G->Edge[HV][V];
+        if(dist[V] < INF)
+            parent[V] = HV;
+        else
+            parent[V] = -1;
+        mark[V] = 0;
+    }
+    //标记源顶点
+    dist[HV] = 0;
+    mark[V] = 1;
+    //利用while函数循环收录顶点
+    while(1)
+    {
+        //调用FindMinDist函数找与父结点最小邻接边的顶点V
+        V = FindMinDist(G, dist, mark);
+        //没找到则结束循环
+        if(V == ERROR)
+            break;
+        //找到了则标记该顶点V已收录
+        mark[V] = 1;
+        //利用for循环找能够让dist变小的顶点
+        for(W = 0; W < G->VertexNum; W++)
+        {
+            //如果循环到的邻接顶点的邻接边小于其父结点的邻接边
+            if(G->Edge[V][W] < dist[W])
+            {
+                //将该边替换
+                dist[W] = G->Edge[V][W];
+                //更新parent数组
+                parent[W] = V;
+            }
+        }
+    }
+}
+
+//从dist数组找未收录最小顶点
+Vertex FindMinDist(MGraph G, dist[], mark[])
+{
+    int i, minV = 0;
+    int flag = 0;
+    for(i = 0; i < G->VertexNum; i++)
+    {
+        if(mark[i] && dist[minV] > dist[i])
+        {
+            flag = 1;
+            minV = i;
+        }
+    }
+    if(flag == 1)
+        return minV;
+    else
+        return ERROR;
+}
+
+
+
+
+
+//Floyd算法求各个顶点最短路径
+//这里图用邻接矩阵储存
+void Floyd(MGraph G, WeightType dis[][MaxVertexNum], Vertex path[][MaxVertexNum])
+{
+    Vertex i, j, K;	
+    
+    //初始化最短路径图dis，将图G复制到dis
+    for(i = 0; i < G->VertexNum; i++)
+        for(j = 0; j < G->VertexNum; j++)
+        {
+            dis[i][j] = G->Edge[i][j];
+            //初始化中转顶点表path
+            path[i][j] = -1;
+        }
+    
+    //循环每个中转顶点
+    for(k = 0; k < G->VertexNum; k++)
+        //循环每条邻接边，找到他们的中转顶点
+        for(i = 0; i < G->VertexNum; i++)
+            for(j = 0; j < G->VertexNum; j++)
+            {
+                //如果i到j的路径比i到k再到j的路径长，就更新i到j的路径
+                if(dis[i][k] + dis[k][j] < dis[i][j])
+                {
+                    dis[i][j] = dis[i][k] + dis[k][j];
+                    //更新中转顶点
+                    path[i][j] = k;
+                }
+            }
+    //最终path[i][j]存的中转顶点是邻接于顶点i的
+}
+
+//利用中转顶点表来找最短路径路程
+void Find(MGraph G, path[][MaxVertexNum], Vertex VH, Vertex VE);
+{
+    printf("%d ", HV);
+    Vertex k = path[VH][VE];
+    while(K != -1)
+    {
+        printf("-> %d ", k);
+        k = path[k][HE];
+    }
+    printf("-> %d\n", HE);
+}
