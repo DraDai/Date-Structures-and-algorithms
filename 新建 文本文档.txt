@@ -3125,3 +3125,107 @@ bool TopSort(MGraph G, Vertex TopOrder)
         return tru
     //结束算法
 }
+
+
+
+
+
+
+
+//关键路径的计算
+//用拓扑排序可求得顶点的ETV和LTV
+//这里用邻接表储存图
+
+//拓扑排序求ETV和LTV
+bool TopSort(LGraph G, int ETV[], int LTV[])
+{
+	//建立一个TopOrder数组，用来存排序好的顶点
+	Vertex TopOrder[G->VertexNum];
+	//遍历图，得到所有顶点的入度，并存入Indegree数组
+    Vertex Indegree[G->VertexNum];
+	Vertex V;
+	AdjV W;
+    for(V = 0; V < G->VertexNum; V++)
+    	for(W = G->AL[V].FirstEdge; W == NULL; W = W->Next)
+        {
+            Indegree[W->V]++;
+        }
+	//创建队列，并将所有入度为0的顶点入队,更新ETV数组
+    Queue Q = CreateQueue(G->VertexNum);
+    for(V = 0; V < G->VertexNum; V++)
+    {
+        if(Indegree[V] == 0)
+        {    
+			AddQ(Q, V);	
+		}
+    }
+	//核心代码
+    //设置一个计数器来观察所有出过队的顶点数量
+    int cnt = 0;
+	//while循环来实现拓扑排序
+    while(!IsEmpty(Q))	//当队列为空时说明没有入度为0的顶点，退出循环
+    {
+        //出队一个顶点，把它存入TopOrder数组，并将计数器加一
+        V = DeleteQ(Q);
+        TopOrder[cnt] = V;
+        cnt++;
+		//遍历顶点V的邻接顶点，如果V的开始时间加活动时间大于邻接顶点的开始时间，则替换邻接顶点时间
+		for(W = G->AL[V].FirstEdge; W; W = W->Next)
+		{
+			if(ETV[V] + W->Weight > ETV[W->V])
+				ETV[W->V] = ETV[V] + W->Weight;
+		}	
+        //把这个顶点的邻接顶点的入度数减一，并且把入度减少后度数为0的邻接顶点入队
+        for(W = G->AL[V].FirstEdge; W; W = W->Next)
+        {
+            Indegree[W->V]--;
+            if(Indegree[W->V] == 0)
+                AddQ(Q, W->V);
+        }
+    }
+	//如果计数器计算的顶点小于原图中顶点数量，说明原图有回路，返回false
+    if(cnt < G->VertexNum)
+        return false;
+	//根据TopOrder数组从最后元素开始计算LTV到下标为0的元素
+	//初始化LTV数组，将汇点值赋予LTV数组
+	for(V = 0; V < G->VertexNum; V++)
+	{
+		LTV[V] = TopOrder[G->VertexNum - 1];
+	}
+	for(V = G->VertexNum - 2; V >= 0; V--)
+	{
+		//遍历顶点V的邻接顶点，如果邻接点最晚时间减活动时间小于V的最晚时间，则替换V顶点时间
+		for(W = G->AL[V].FirstEdge; W; W = W->Next)
+		{
+			if(LTV[W->V] - W->Weight < LTV[V])
+				LTV[V] = LTV[W->V] - W->Weight;
+		}
+	}
+	//算法结束
+	return true;
+}
+
+
+//求关键路径函数，将关键顶点存入CriticalV[]数组中
+bool CriticalPath(LGraph G, Vertex CriticalV[])
+{
+	//设置ETV数组存每个顶点最早开始时间
+	//设置LTV数组存每个顶点最晚需开始时间
+	int ETV[G->VertexNum] = {0};
+	int LTV[G->VertexNum];
+	//利用拓扑排序得到ETV和LTV
+	if(TopSort(G, ETV, LTV) == false)
+		return false; 
+	//将每个顶点的ETV和LTV比较，如果相等就放入CriticalV数组
+	Vertex V;
+	int cnt = 0;
+	for(V = 0; V < G->VertexNum; V++)
+	{
+		if(ETV[V] == LTV[V])
+		{
+			CriticalV[cnt] = V;
+			cnt++;
+		}
+	}
+	return true;
+}
