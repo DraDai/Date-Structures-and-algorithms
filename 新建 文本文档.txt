@@ -3229,3 +3229,70 @@ bool CriticalPath(LGraph G, Vertex CriticalV[])
 	}
 	return true;
 }
+
+
+
+
+typedef int ElementType;
+//太简单了我就不写注释了
+void SSSort(ElementType A[], int N)
+{
+	int i, j, min;
+
+	for(i = 0; i < N - 1; i++)
+	{
+		min = i;
+		for(j = i + 1; j < N; j++)
+		{
+			if(A[min] >A[j])
+				min = j;
+		}
+		int t;
+		t = A[i];
+		A[i] = A[min];
+		A[min] = t;
+	}
+}
+
+
+void HeapSort(ElementType A[], int N)
+{
+    //堆排序
+    int i;
+    //生成最大堆
+    for(i = N / 2 - 1; i >= 0; i--)
+    {
+        PercDown(A, i, N);
+    }
+    
+    //删除堆顶，调整最大堆
+    for(i = N - 1; i > 0; i--)
+    {
+        int t;
+        t = A[i];
+        A[i] = A[0];
+        A[0] = t;
+        //调整堆
+        PercDown(A, 0, i);	//将堆容量缩小
+    }
+}
+
+//将数组以A[p]为根的子堆调整为最大堆
+void PercDown(ElementType A[], int p, int N)
+{
+    int Parent, Child;
+    ElementType X;
+    
+    X = A[p];
+    for(Parent = p; (Parent*2 + 1) < N; Parent = Child)
+    {
+        Child = Parent * 2 + 1;
+        if(Child != N - 1 && A[Child] < A[Child + 1])
+            Child++;
+        if(A[Child] < X)
+            break;	//说明找到了合适位置
+        else
+            A[Parent] = A[Child];
+    }
+    A[Parent] = X;
+}
