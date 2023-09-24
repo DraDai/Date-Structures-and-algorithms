@@ -3375,3 +3375,67 @@ void InsertSort(vector<ElementType> &A, int left, int right)
 		A[i] = Tmp;	//放进合适位置
 	}
 }
+
+
+
+//归并排序
+// 将原序列和排序序列，以及需要归并的两个子序列的起点位序和右序列的终点传入函数
+void Merge(vector<ElementType>& A, vector<ElementType>& TmpA, int L, int R, int Rend)
+{
+	//归并两个有序序列
+	int Lend, Tmp;
+	//左序列终点的位序
+	Lend = R - 1;
+	//排序序列的起始位置
+	Tmp = L;
+	int left = L;
+	int right = Rend;
+	//比较合并
+	while (L <= Lend && R <= Rend)
+	{
+		if (A[L] <= A[R])
+			TmpA[Tmp++] = A[L++];
+		else
+			TmpA[Tmp++] = A[R++];
+	}
+	//将多余的序列放进排序序列里
+	while (L <= Lend)
+		TmpA[Tmp++] = A[L++];
+	while (R <= Rend)
+		TmpA[Tmp++] = A[R++];
+
+	//最后将TmpA复制回A
+	for (int i = left; i <= right; i++)
+	{
+		A[i] = TmpA[i];
+	}
+}
+//真·归并排序
+//将原序列和排序序列以及他们的左位序和右位序传入函数
+void MSort(vector<ElementType>& A, vector<ElementType> &TmpA, int left, int right)
+{
+	//核心递归排序函数
+	int center;
+
+	if (left < right)
+	{
+		//将序列分为左右两半
+		center = (left + right) / 2;
+		//递归解决左边子序列
+		MSort(A, TmpA, left, center);
+		//递归解决右边子序列
+		MSort(A, TmpA, center + 1, right);
+		//合并两个子序列
+		Merge(A, TmpA, left, center + 1, right);
+	}
+}
+//这是一个用来调整接口的函数
+void MergeSort(vector<ElementType>& A)
+{
+	//创建一个空数组用来存归并后的元素
+	vector<ElementType> TmpA(A.size());
+	//真·归并排序
+	MSort(A, TmpA, 0, A.size() - 1);
+	//清空tmp数组
+	TmpA.clear();
+}
