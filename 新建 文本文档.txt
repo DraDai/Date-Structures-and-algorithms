@@ -3296,3 +3296,82 @@ void PercDown(ElementType A[], int p, int N)
     }
     A[Parent] = X;
 }
+
+//用快速排序，找一个好的主元是很重要的，可以很好的提高排序效率
+//可以将A[low]、A[high]、A[(low+high) / 2]三者关键字的中值作为主元
+//在序列长度低到某个值时，快速排序的效率很低，可以在低长度序列用简单插排来排序
+//快速排序
+void QuickSort(vector<ElementType> &A, int N)
+{
+    //统一接口
+    QSort(A, 0, N - 1);
+}
+
+//真快速排序
+//从序列的范围left到right进行快排
+void QSort(vector<ElementType> &A, int left, int right)
+{
+    int Cutoff = 30, low, Hight;  //Pivot是主元基准序列号，Cutoff是判断是否切换排序的序列长度
+    ElementType Pivot;
+    //如果元素充分多，进入快排
+    if(Cutoff <= right - left)
+    {
+        //选择基准
+        Pivot = Median(A, left, right);
+        low = left;
+        Hight = right - 1;  //此时基准在这段序列的Hight处
+        //将序列比基准小的放右边，比基准大的放左边
+        while(1)
+        {
+            while (A[++low] < Pivot);
+            while (A[--Hight] > Pivot);
+            if(low < Hight)   //到这一步说明此时A[low]的值大于主元，A[Hight]的值小于主元，将两元素调换
+                swap(A[low], A[Hight]);
+            else
+                break;//这一步说明该序列元素已比较完毕,此时A[low]的值大于主元,A[Hight]的值小于主元
+        }
+        //将A[low]和主元调换，使主元回到正确位置
+        swap(A[low], A[right - 1]);
+        //分别递归解决左边序列和右边序列
+        QSort(A, left, low - 1);
+        QSort(A, low + 1, right);
+    }
+    //如果序列长度小于阈值，用插入排序
+    else
+    {
+        InsertSort(A, left, right);
+    }
+}
+//选择主元函数
+ElementType Median(vector<ElementType> &A, int left, int right)
+{
+    int center = (left + right) / 2;
+    //判断三个序列代表的值的大小，给他们安排位置
+    if(A[left] > A[center])
+        swap(A[left], A[center]);
+    if(A[left] > A[right])
+        swap(A[left], A[right]);
+    if(A[center] > A[right])
+        swap(A[center], A[right]);
+    //此时A[left] < A[center] < A[right],将A[center]元素与A[right - 1]交换
+    swap(A[center], A[right - 1]);
+    //只需要考虑A[left + 1]……A[right-2]
+    //返回主元
+    return A[right - 1];
+}
+//插排
+void InsertSort(vector<ElementType> &A, int left, int right)
+{
+	int i, p;
+	ElementType Tmp;
+
+	//从未排序序列第一个元素开始，也就是下标为1的元素开始
+	for(p = left + 1; p <= right; p++)
+	{
+		Tmp = A[p];
+		for(i = p; i > 0 && A[i - 1] > Tmp; i--)	//如果该元素小于左边元素
+			//交换两个元素
+			A[i] = A[i - 1];
+		A[i] = Tmp;	//放进合适位置
+	}
+}
