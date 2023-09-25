@@ -3439,3 +3439,50 @@ void MergeSort(vector<ElementType>& A)
 	//清空tmp数组
 	TmpA.clear();
 }
+
+
+//指定基数
+#define Redix 10
+//指定最多关键字
+#define MaxDigit 4
+//根据基数取数字相应的位
+int GetDigit(ElementType X, int D)
+{
+	int d, i;
+	for (i = 1; i <= D; i++)
+	{
+		d = X % Redix;
+		X = X / Redix;
+	}
+	return d;
+}
+//次位优先基数排序
+void LSDRadixSort(vector<ElementType> &A)
+{
+	int Di;
+	//创建十个桶
+	vector<vector<ElementType>> Bucket(Redix);
+	//开始排序
+	for (int D = 1; D <= MaxDigit; D++)	//对数据的每一位循环处理
+	{
+		//分配
+		for (int i = 0; i < A.size(); i++)	//将每个数字按基数分配到各个桶中
+		{
+			Di = GetDigit(A[i], D);	//获得当前位数字
+			//放入桶中
+			Bucket[Di].push_back(A[i]);
+		}
+		//收集
+		int j = A.size() - 1;
+		for (int i = Redix - 1; i >= 0; i--)
+		{
+			//将桶中元素按顺序放入A中
+			while (!Bucket[i].empty())
+			{
+				A[j] = Bucket[i].back();
+				Bucket[i].pop_back();
+				j--;
+			}
+		}
+	}
+}
